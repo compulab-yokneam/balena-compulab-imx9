@@ -1,31 +1,19 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/linux-compulab:"
-inherit kernel-resin
-
-DEPENDS += "rsync-native"
-
-SRC_URI:append = "file://0001-fix-kernel-build.patch"
-
-# Upstream uses AUTOREV, but we need to track
-# the stable release as per the release notes,
-# at the date of the present commit,
-# otherwise we won't know which exact kernel
-# revision is used by which balenaOS release
-SRCREV="77c117ac5747ea5c1afbdde8dcc5ca8b8b231e13"
-
-# Fixes issue where cryptodev module is installed
-# along with the kernel image in the initramfs
-KERNEL_PACKAGE_NAME="kernel"
-
+inherit kernel-balena
 
 BALENA_CONFIGS:append = " imx-sdma "
 BALENA_CONFIGS[imx-sdma] = " \
 	CONFIG_IMX_SDMA=m \
 "
 
-# Ensure this module isn't built-in
+# Ensure this module is built-in otherwise we get this error:
+# Error:
+# Problem: package kernel-module-nxp-wlan-git-r0.ucm_imx93 from oe-repo requires kernel-module-moal-6.6.52-3.0-gdf747cfac8c0, but none of the providers can be installed
+#  - conflicting requests
+#  - nothing provides kernel-module-cfg80211-6.6.52-3.0-gdf747cfac8c0 needed by kernel-module-moal-6.6.52-3.0-gdf747cfac8c0-git-r0.ucm_imx93 from oe-repo
+# (try to add '--skip-broken' to skip uninstallable packages)
 BALENA_CONFIGS:append = " cf80211 "
 BALENA_CONFIGS[cf80211] = " \
-	CONFIG_CFG80211=m \
+	CONFIG_CFG80211=y \
 "
 
 # We don't load grub with u-boot, instead
@@ -37,24 +25,11 @@ BALENA_CONFIGS[noefi] = " \
 "
 
 # The reference image does not have ar1335 enabled
-# so we disable this as well to avoid long messges
+# so we disable this as well to avoid long messages
 # caused by probe errors.
 BALENA_CONFIGS:append = " noar1335 "
 BALENA_CONFIGS[noar1335] = " \
-    CONFIG_MXC_CAMERA_AR1335=n \
-    CONFIG_MXC_CAMERA_AR1335_AF=n \
-    CONFIG_MXC_CAMERA_AR1335_MCU=n \
+	CONFIG_MXC_CAMERA_AR1335=n \
+	CONFIG_MXC_CAMERA_AR1335_AF=n \
+	CONFIG_MXC_CAMERA_AR1335_MCU=n \
 "
-
-BALENA_CONFIGS:append = " imx "
-BALENA_CONFIGS[imx] = " \
-    CONFIG_SOC_IMX9=m \
-    CONFIG_IMX8_MEDIA_DEVICE=m \
-"
-
-# Fixes module loading
-SCMVERSION="n"
-
-FILES:${KERNEL_PACKAGE_NAME}-modules = "${nonarch_base_libdir}/modules/ /etc/"
-
-# Other considerations: the reference sd-card image is using the older kernel revision at aa2ec039c837
