@@ -4,8 +4,12 @@ inherit resin-u-boot
 DEPENDS = "bison-native"
 
 SRC_URI:append = " \
-    file://0100-ucm93-Integrate-with-balenaOS.patch \
-    file://u-boot-compulab-balena.cfg \
+    file://0001-compulab-imx93-Add-BalenOS-environmet.patch \
+    file://balena.cfg \
+"
+
+SRC_URI:remove = " \
+	resin-specific-env-integration-non-kconfig.patch \
 "
 
 BALENA_DEVICE_FDT_ADDR_VAR = "fdt_addr_r"
