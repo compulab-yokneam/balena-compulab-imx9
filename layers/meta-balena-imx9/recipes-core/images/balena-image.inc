@@ -12,6 +12,11 @@ IMAGE_INSTALL:append = " \
     libgpiod \
     libgpiod-tools \
     ethos-u-firmware \
+    firmware-nxp-wifi-nxpiw612-sdio \
+    linux-firmware-iwlwifi-cc-a0 \
+    linux-firmware-iwlwifi-ty-a0 \
+    linux-firmware-ibt-20 \
+    linux-firmware-ibt-41-41 \
 "
 
 IMAGE_INSTALL:remove = "kernel-image"
