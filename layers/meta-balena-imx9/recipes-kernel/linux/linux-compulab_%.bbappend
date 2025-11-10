@@ -1,4 +1,10 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
 inherit kernel-balena
+
+SRC_URI:append = " \
+    file://compulab-mx93-extra.cfg \
+"
 
 BALENA_CONFIGS:append = " imx-sdma "
 BALENA_CONFIGS[imx-sdma] = " \
